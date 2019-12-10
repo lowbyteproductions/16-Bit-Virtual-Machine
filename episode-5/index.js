@@ -31,15 +31,21 @@ const writableBytes = new Uint8Array(memory.buffer);
 const cpu = new CPU(MM);
 let i = 0;
 
-writableBytes[i++] = instructions.MOV_LIT_REG;
-writableBytes[i++] = 0x00;
-writableBytes[i++] = 'H'.charCodeAt(0);
-writableBytes[i++] = R1;
+const writeCharToScreen = (char, position) => {
+  writableBytes[i++] = instructions.MOV_LIT_REG;
+  writableBytes[i++] = 0x00;
+  writableBytes[i++] = char.charCodeAt(0);
+  writableBytes[i++] = R1;
 
-writableBytes[i++] = instructions.MOV_REG_MEM;
-writableBytes[i++] = R1;
-writableBytes[i++] = 0x30;
-writableBytes[i++] = 0x00;
+  writableBytes[i++] = instructions.MOV_REG_MEM;
+  writableBytes[i++] = R1;
+  writableBytes[i++] = 0x30;
+  writableBytes[i++] = position;
+};
+
+"Hello World!".split('').forEach((char, index) => {    
+  writeCharToScreen(char, index);
+});
 
 writableBytes[i++] = instructions.HLT;
 
