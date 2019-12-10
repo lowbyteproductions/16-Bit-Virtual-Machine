@@ -31,9 +31,9 @@ const writableBytes = new Uint8Array(memory.buffer);
 const cpu = new CPU(MM);
 let i = 0;
 
-const writeCharToScreen = (char, position) => {
+const writeCharToScreen = (char, command, position) => {
   writableBytes[i++] = instructions.MOV_LIT_REG;
-  writableBytes[i++] = 0x00;
+  writableBytes[i++] = command;
   writableBytes[i++] = char.charCodeAt(0);
   writableBytes[i++] = R1;
 
@@ -43,8 +43,13 @@ const writeCharToScreen = (char, position) => {
   writableBytes[i++] = position;
 };
 
-for (let index = 0; index <= 0xff; index++) {    
-  writeCharToScreen('*', index);
+writeCharToScreen(' ', 0xff, 0); // Clear the screen
+
+for (let index = 0; index <= 0xff; index++) {
+  const command = index % 2 === 0
+    ? 0x01  // In bold
+    : 0x02; // Regular
+  writeCharToScreen('*', command, index);
 }
 
 writableBytes[i++] = instructions.HLT;
