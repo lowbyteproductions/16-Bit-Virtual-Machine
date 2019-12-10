@@ -232,6 +232,11 @@ class CPU {
         this.popState();
         return;
       }
+
+      // Halt all computation
+      case instructions.HLT: {
+        return true;
+      }
     }
   }
 

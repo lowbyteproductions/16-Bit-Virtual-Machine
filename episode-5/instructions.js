@@ -10,6 +10,7 @@ const POP          = 0x1A;
 const CAL_LIT      = 0x5E;
 const CAL_REG      = 0x5F;
 const RET          = 0x60;
+const HLT          = 0xFF;
 
 module.exports = {
   MOV_LIT_REG,
@@ -24,4 +25,5 @@ module.exports = {
   CAL_LIT,
   CAL_REG,
   RET,
+  HLT,
 };
