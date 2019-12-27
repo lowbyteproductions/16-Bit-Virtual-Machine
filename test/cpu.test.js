@@ -1,6 +1,8 @@
-const createMemory = require('../episode-4/create-memory');
-const CPU = require('../episode-4/cpu');
-const instructions = require('../episode-4/instructions');
+jest.useFakeTimers();
+
+const createMemory = require('../episode-5/create-memory');
+const CPU = require('../episode-5/cpu');
+const instructions = require('../episode-5/instructions');
 
 const IP = 0;
 const ACC = 1;
@@ -15,7 +17,7 @@ const R8 = 9;
 const SP = 10;
 const FP = 11;
 
-const createCPU = (cb = writeableBytes => {}, sizeInBytes = 256) => {
+const createCPU = (cb = writeableBytes => {}, sizeInBytes = 256 * 256) => {
   const memory = createMemory(sizeInBytes);
   const writeableBytes = new Uint8Array(memory.buffer);
 
@@ -24,7 +26,7 @@ const createCPU = (cb = writeableBytes => {}, sizeInBytes = 256) => {
   return new CPU(memory);
 }
 
-const createCPUWithInstructions = (sizeInBytes = 256) => {
+const createCPUWithInstructions = (sizeInBytes = 256 * 256) => {
   return createCPU(writeableBytes => {
     let i = 0;
     writeableBytes[i++] = instructions.MOV_LIT_REG;
@@ -82,8 +84,8 @@ r5: 0x5678
 r6: 0x0000
 r7: 0x0000
 r8: 0x0000
-sp: 0x00fe
-fp: 0x00fe`);
+sp: 0xfffe
+fp: 0xfffe`);
     });
   });
 
@@ -105,18 +107,18 @@ fp: 0x00fe`);
     it('should return the value of a register', () => {
       const cpu = createCPU();
 
-      expect(cpu.getRegister('ip')).toBe(0);
-      expect(cpu.getRegister('acc')).toBe(0);
-      expect(cpu.getRegister('r1')).toBe(0);
-      expect(cpu.getRegister('r2')).toBe(0);
-      expect(cpu.getRegister('r3')).toBe(0);
-      expect(cpu.getRegister('r4')).toBe(0);
-      expect(cpu.getRegister('r5')).toBe(0);
-      expect(cpu.getRegister('r6')).toBe(0);
-      expect(cpu.getRegister('r7')).toBe(0);
-      expect(cpu.getRegister('r8')).toBe(0);
-      expect(cpu.getRegister('sp')).toBe(254);
-      expect(cpu.getRegister('fp')).toBe(254);
+      expect(cpu.getRegister('ip')).toBe(0x0000);
+      expect(cpu.getRegister('acc')).toBe(0x0000);
+      expect(cpu.getRegister('r1')).toBe(0x0000);
+      expect(cpu.getRegister('r2')).toBe(0x0000);
+      expect(cpu.getRegister('r3')).toBe(0x0000);
+      expect(cpu.getRegister('r4')).toBe(0x0000);
+      expect(cpu.getRegister('r5')).toBe(0x0000);
+      expect(cpu.getRegister('r6')).toBe(0x0000);
+      expect(cpu.getRegister('r7')).toBe(0x0000);
+      expect(cpu.getRegister('r8')).toBe(0x0000);
+      expect(cpu.getRegister('sp')).toBe(0xfffe);
+      expect(cpu.getRegister('fp')).toBe(0xfffe);
     });
 
     it('should throw an error if the register does not exist', () => {
@@ -186,7 +188,7 @@ fp: 0x00fe`);
 
       const spAddress = cpu.getRegister('sp');
       const stackFrameSize = cpu.stackFrameSize;
-      const value = 0x1111;
+      const value = 0x0001;
 
       cpu.push(value);
 
@@ -209,18 +211,18 @@ fp: 0x00fe`);
       cpu.pushState();
 
       expect(cpu.stackFrameSize).toBe(0);
-      expect(cpu.getRegister('sp')).toBe(0x00EA);
-      expect(cpu.getRegister('fp')).toBe(0x00EA);
-      expect(cpu.memory.getUint16(0x00FE)).toBe(0x3333); // r1
-      expect(cpu.memory.getUint16(0x00FC)).toBe(0x2222); // r2
-      expect(cpu.memory.getUint16(0x00FA)).toBe(0x1111); // r3
-      expect(cpu.memory.getUint16(0x00F8)).toBe(0x1234); // r4
-      expect(cpu.memory.getUint16(0x00F6)).toBe(0x5678); // r5
-      expect(cpu.memory.getUint16(0x00F4)).toBe(0x0000); // r6
-      expect(cpu.memory.getUint16(0x00F2)).toBe(0x0000); // r7
-      expect(cpu.memory.getUint16(0x00F0)).toBe(0x0000); // r8
-      expect(cpu.memory.getUint16(0x00EE)).toBe(0x0014); // ip
-      expect(cpu.memory.getUint16(0x00EC)).toBe(0x0014); // stack frame size
+      expect(cpu.getRegister('sp')).toBe(0xffea);
+      expect(cpu.getRegister('fp')).toBe(0xffea);
+      expect(cpu.memory.getUint16(0xfffe)).toBe(0x3333); // r1
+      expect(cpu.memory.getUint16(0xfffc)).toBe(0x2222); // r2
+      expect(cpu.memory.getUint16(0xfffa)).toBe(0x1111); // r3
+      expect(cpu.memory.getUint16(0xfff8)).toBe(0x1234); // r4
+      expect(cpu.memory.getUint16(0xfff6)).toBe(0x5678); // r5
+      expect(cpu.memory.getUint16(0xfff4)).toBe(0x0000); // r6
+      expect(cpu.memory.getUint16(0xfff2)).toBe(0x0000); // r7
+      expect(cpu.memory.getUint16(0xfff0)).toBe(0x0000); // r8
+      expect(cpu.memory.getUint16(0xffee)).toBe(0x0014); // ip
+      expect(cpu.memory.getUint16(0xffec)).toBe(0x0014); // stack frame size
     });
   });
 
@@ -365,7 +367,7 @@ fp: 0x00fe`);
           writeableBytes[i++] = R1;
           writeableBytes[i++] = 0x00;
           writeableBytes[i++] = 0x10;
-        }, 256);
+        });
 
         cpu.step();
         cpu.step();
@@ -456,7 +458,7 @@ fp: 0x00fe`);
           writeableBytes[i++] = 0x03;
           writeableBytes[i++] = 0x00;
           writeableBytes[i++] = 0x00;
-        }, 256 * 256);
+        });
 
         // Setup
         cpu.step();
@@ -508,7 +510,7 @@ fp: 0x00fe`);
           writeableBytes[i++] = 0x01;
           writeableBytes[i++] = 0x00;
           writeableBytes[i++] = 0x00;
-        }, 256 * 256);
+        });
 
         // Setup
         cpu.step();
@@ -635,7 +637,7 @@ fp: 0x00fe`);
           writeableBytes[i++] = R1;
 
           writeableBytes[i++] = instructions.RET;
-        }, 256 * 256);
+        });
 
         // Setup
         cpu.step();
@@ -711,7 +713,7 @@ fp: 0x00fe`);
           writeableBytes[i++] = R1;
 
           writeableBytes[i++] = instructions.RET;
-        }, 256 * 256);
+        });
 
         // Setup
         cpu.step();
@@ -784,7 +786,7 @@ fp: 0x00fe`);
           writeableBytes[i++] = R1;
 
           writeableBytes[i++] = instructions.RET;
-        }, 256 * 256);
+        });
 
         // Setup
         cpu.step();
@@ -813,6 +815,50 @@ fp: 0x00fe`);
         expect(cpu.memory.getUint16(cpu.memory.byteLength - 4)).toBe(0x4444);
         expect(cpu.getRegister('r1')).toBe(0x1234);
       });
+    });
+
+    describe('HLT', () => {
+      it('should return true', () => {
+        const cpu = createCPU(writeableBytes => {
+          let i = 0;
+
+          writeableBytes[i++] = instructions.HLT;
+        });
+
+        expect(cpu.step()).toBeTruthy();
+      });
+    });
+  });
+
+  describe('CPU.run', () => {
+    it('should run a program', () => {
+      const cpu = createCPU(writeableBytes => {
+        let i = 0;
+
+        writeableBytes[i++] = instructions.PSH_LIT;
+        writeableBytes[i++] = 0x01;
+        writeableBytes[i++] = 0x02;
+
+        writeableBytes[i++] = instructions.MOV_LIT_REG;
+        writeableBytes[i++] = 0x12;
+        writeableBytes[i++] = 0x34;
+        writeableBytes[i++] = R1;
+
+        writeableBytes[i++] = instructions.MOV_LIT_REG;
+        writeableBytes[i++] = 0x56;
+        writeableBytes[i++] = 0x78;
+        writeableBytes[i++] = R2;
+
+        writeableBytes[i++] = instructions.HLT;
+      });
+
+      cpu.run();
+
+      jest.runAllTimers();
+
+      expect(cpu.getRegister('r1')).toBe(0x1234);
+      expect(cpu.getRegister('r2')).toBe(0x5678);
+      expect(cpu.memory.getUint16(cpu.memory.byteLength - 2)).toBe(0x0102);
     });
   });
 });

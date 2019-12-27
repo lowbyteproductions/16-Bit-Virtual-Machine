@@ -9,9 +9,11 @@ module.exports = {
   ],
   collectCoverage: true,
   collectCoverageFrom: [
-    'episode-4/cpu.js',
-    'episode-4/create-memory.js',
-    'episode-4/instructions.js'
+    'episode-5/cpu.js',
+    'episode-5/create-memory.js',
+    'episode-5/instructions.js',
+    'episode-5/memory-mapper.js',
+    'episode-5/screen-device.js'
   ],
   coverageThreshold: {
     global: {
