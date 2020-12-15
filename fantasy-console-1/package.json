@@ -1,0 +1,19 @@
+{
+  "name": "fantasy-cnosole-forked-16",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "browserslist": [
+    "last 1 Chrome version"
+  ],
+  "dependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
+}
