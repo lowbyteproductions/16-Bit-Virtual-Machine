@@ -1,0 +1,21 @@
+{
+  "name": "fantasy-console",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "browserslist": [
+    "last 1 Chrome version"
+  ],
+  "dependencies": {
+    "@babel/preset-env": "^7.13.8",
+    "arcsecond": "^3.1.2",
+    "parcel-bundler": "^1.12.4"
+  }
+}
